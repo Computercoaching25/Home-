@@ -1,4 +1,5 @@
-
+`index.html`
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -238,6 +239,17 @@
       min-width: unset;
       font-size: 13px;
     }
+  }
+  /* screen-reader only */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    border: 0 !important;
   }
 </style>
 </head>
@@ -755,90 +767,50 @@
       exportToCSV('chitragupt_records.csv', rows);
     });
 
-    // Print button handler
-printBtn.addEventListener('click', () => {
-  // Open new window and write printable content
-  const printWindow = window.open('', '_blank', 'width=900,height=700');
-  const style = `
-    <style>
-      @page {
-        size: A4 portrait;
-        margin: 18mm 12mm 18mm 12mm;
-      }
-      html, body {
-        background: #fff !important;
-        color: #222 !important;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        width: 210mm;
-        min-height: 297mm;
-      }
-      h2 {
-        margin-top: 0;
-        font-size: 22px;
-        text-align: center;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 14px;
-        margin-top: 14px;
-      }
-      th, td {
-        border: 1px solid #444;
-        padding: 7px 10px;
-        text-align: left;
-      }
-      th {
-        background: #e3eafc !important;
-        color: #222 !important;
-        font-weight: 700;
-      }
-      caption {
-        font-weight: 700;
-        font-size: 18px;
-        margin-bottom: 8px;
-      }
-      @media print {
-        html, body {
-          width: 210mm;
-          min-height: 297mm;
-          margin: 0;
-          padding: 0;
-        }
-        body {
-          box-shadow: none !important;
-        }
-        table, th, td {
-          page-break-inside: avoid !important;
-        }
-        th {
-          background: #e3eafc !important;
-          color: #222 !important;
-        }
-      }
-    </style>
-  `;
+    // Print button handler (improved for A4 print styling)
+    printBtn.addEventListener('click', () => {
+      const printWindow = window.open('', '_blank', 'width=900,height=700');
+      const style = `
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 20mm 15mm 20mm 15mm;
+          }
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10mm;
+            color: #333;
+          }
+          h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12pt;
+            color: #222;
+          }
+          th, td {
+            border: 1px solid #999;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: middle;
+            page-break-inside: avoid;
+          }
+          th {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 700;
+          }
+          tr:nth-child(even) {
+            background-color: #f2f6fc;
+          }
+        </style>
+      `;
 
-  // Copy table HTML with visible filters applied
-  const tableHTML = document.getElementById('records-table').outerHTML;
-  printWindow.document.write(`<!DOCTYPE html><html><head><title>Print Records</title>${style}</head><body>`);
-  printWindow.document.write('<h2>Chitragupt Academy - Student Records</h2>');
-  printWindow.document.write(tableHTML);
-  printWindow.document.write('</body></html>');
-  printWindow.document.close();
-
-  // Wait for content to load before printing
-  printWindow.onload = function() {
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-  };
-});
-
-
-      // Copy table HTML with visible filters applied
       const tableHTML = document.getElementById('records-table').outerHTML;
       printWindow.document.write(`<!DOCTYPE html><html><head><title>Print Records</title>${style}</head><body>`);
       printWindow.document.write('<h2>Chitragupt Academy - Student Records</h2>');
@@ -846,8 +818,11 @@ printBtn.addEventListener('click', () => {
       printWindow.document.write('</body></html>');
       printWindow.document.close();
       printWindow.focus();
-      printWindow.print();
-      printWindow.close();
+      // Give time to apply styles and render before printing on some browsers
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 250);
     });
 
     // Navigation buttons click
