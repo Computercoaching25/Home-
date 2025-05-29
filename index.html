@@ -756,18 +756,87 @@
     });
 
     // Print button handler
-    printBtn.addEventListener('click', () => {
-      // Open new window and write printable content
-      const printWindow = window.open('', '_blank', 'width=900,height=700');
-      const style = `
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          table { border-collapse: collapse; width: 100%; font-size: 14px; }
-          th, td { border: 1px solid #999; padding: 8px; text-align: left; }
-          th { background: #3b82f6; color: white; }
-          caption { font-weight: 700; font-size: 18px; margin-bottom: 8px; }
-        </style>
-      `;
+printBtn.addEventListener('click', () => {
+  // Open new window and write printable content
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
+  const style = `
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 18mm 12mm 18mm 12mm;
+      }
+      html, body {
+        background: #fff !important;
+        color: #222 !important;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        min-height: 297mm;
+      }
+      h2 {
+        margin-top: 0;
+        font-size: 22px;
+        text-align: center;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+        margin-top: 14px;
+      }
+      th, td {
+        border: 1px solid #444;
+        padding: 7px 10px;
+        text-align: left;
+      }
+      th {
+        background: #e3eafc !important;
+        color: #222 !important;
+        font-weight: 700;
+      }
+      caption {
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      @media print {
+        html, body {
+          width: 210mm;
+          min-height: 297mm;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          box-shadow: none !important;
+        }
+        table, th, td {
+          page-break-inside: avoid !important;
+        }
+        th {
+          background: #e3eafc !important;
+          color: #222 !important;
+        }
+      }
+    </style>
+  `;
+
+  // Copy table HTML with visible filters applied
+  const tableHTML = document.getElementById('records-table').outerHTML;
+  printWindow.document.write(`<!DOCTYPE html><html><head><title>Print Records</title>${style}</head><body>`);
+  printWindow.document.write('<h2>Chitragupt Academy - Student Records</h2>');
+  printWindow.document.write(tableHTML);
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+
+  // Wait for content to load before printing
+  printWindow.onload = function() {
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+});
+
 
       // Copy table HTML with visible filters applied
       const tableHTML = document.getElementById('records-table').outerHTML;
